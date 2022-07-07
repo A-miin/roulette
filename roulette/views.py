@@ -4,6 +4,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from roulette.models import Roulette, Round
+from roulette.serializers import RoundStat
 
 
 class Spin(generics.GenericAPIView):
@@ -12,6 +13,7 @@ class Spin(generics.GenericAPIView):
     def post(self, request):
         round_obj, created = Round.objects.get_or_create(finish=False)
         number = round_obj.get_roulette_number()
+        round_obj.users.add(request.user)
         if number.value == -1:
             round_obj.finish = True
             round_obj.save()
@@ -21,9 +23,13 @@ class Spin(generics.GenericAPIView):
             )
         else:
             round_obj.used_numbers.add(number)
-            round_obj.save()
             return Response(
                 {'Roulette': _(f'Вам выпал номер: {number.value}')},
                 status=status.HTTP_200_OK
             )
 
+
+class Statistic(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Round.objects.all()
+    serializer_class = RoundStat
