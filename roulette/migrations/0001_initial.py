@@ -52,7 +52,6 @@ class Migration(migrations.Migration):
             name='Round',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number', models.IntegerField()),
                 ('finish', models.BooleanField(default=False)),
                 ('used_numbers', models.ManyToManyField(related_name='rounds', to='roulette.Roulette')),
                 ('users', models.ManyToManyField(related_name='users', to=settings.AUTH_USER_MODEL)),

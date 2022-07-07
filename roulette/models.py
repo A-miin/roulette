@@ -19,7 +19,6 @@ class Roulette(models.Model):
 
 
 class Round(models.Model):
-    number = models.IntegerField()
     used_numbers = models.ManyToManyField(
         'roulette.Roulette',
         related_name='rounds'
@@ -31,14 +30,15 @@ class Round(models.Model):
     finish = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.number
+        return f'{self.id}:{self.finish}'
 
     class Meta:
         verbose_name = _('Раунд')
         verbose_name_plural = _('Раунды')
 
     def get_roulette_number(self) -> Roulette:
-        roulettes = Roulette.objects.exclude(id__in=F("used_numbers")).exclude(value=-1)
+        used_ids = self.used_numbers.values_list('id', flat=True)
+        roulettes = Roulette.objects.exclude(id__in=used_ids).exclude(value=-1)
         roulettes_weight_list = []
         for roulette in roulettes:
             roulettes_weight_list.extend([roulette]*roulette.weight)
