@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'roulette',
 
     # lib apps
+    'rest_framework',
     'rest_framework_simplejwt',
 
 ]
